@@ -1,5 +1,5 @@
 import numpy as np
-from keras_preprocessing import image
+from tensorflow.keras.preprocessing import image
 
 
 def random_flip(img, masks, masks2, u=0.5):

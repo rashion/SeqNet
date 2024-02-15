@@ -1,22 +1,23 @@
 import h5py
-import keras.backend as K
+import tensorflow.keras.backend as K
 import numpy as np
 import os
 import os.path
 import tensorflow as tf
 import threading
 from PIL import Image
-from keras import backend as K
-from keras import losses
-from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
-from keras.layers import Input, MaxPooling2D, Lambda
-from keras.layers import concatenate, Conv2D, Conv2DTranspose, Dropout, ReLU, BatchNormalization, Activation
-from keras.layers.merge import add, multiply
-from keras.models import Model
-from keras.optimizers import Adam
+from tensorflow.keras import backend as K
+from tensorflow.keras import losses
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.layers import Input, MaxPooling2D, Lambda
+from tensorflow.keras.layers import concatenate, Conv2D, Conv2DTranspose, Dropout, ReLU, BatchNormalization, Activation
+from tensorflow.keras.layers import add, multiply
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+# from tensorflow.keras.optimizers.legacy import Adam
 from numpy import random
 from random import randint
-from utils import data_augmentation, prepare_dataset
+from utils_new import data_augmentation, prepare_dataset
 
 
 def get_unet(minimum_kernel=32, do=0, activation=ReLU, iteration=1):
@@ -392,7 +393,7 @@ def get_unet(minimum_kernel=32, do=0, activation=ReLU, iteration=1):
         "cls_vei_final_out": ['accuracy'],
     }
 
-    model.compile(optimizer=Adam(lr=1e-3), loss=loss_funcs, metrics=metrics)
+    model.compile(optimizer=Adam(learning_rate=1e-3), loss=loss_funcs, metrics=metrics)
 
     return model
 

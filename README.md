@@ -1,4 +1,4 @@
-# SeqNet
+# Fork of SeqNet
 
 ## Joint Learning of Vessel Segmentation and Artery/Vein Classification
 

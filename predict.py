@@ -2,10 +2,11 @@
 import argparse
 import os
 import tensorflow as tf
-from keras.backend import tensorflow_backend
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import ReLU
 
-from utils import define_model, crop_prediction
-from keras.layers import ReLU
+from utils_new import define_model, crop_prediction, lowercase
+# from keras.layers import ReLU
 from tqdm import tqdm
 import numpy as np
 from skimage.transform import resize
@@ -18,6 +19,8 @@ def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_ker
             epochs=200, iteration=3, crop_size=128, stride_size=3, 
             input_path='', output_path='', DATASET='ALL'):
     exts = ['png', 'jpg', 'tif', 'bmp', 'gif']
+
+    lowercase.convert_filenames_to_lowercase(input_path)
 
     if not input_path.endswith('/'):
         input_path += '/'
@@ -40,6 +43,7 @@ def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_ker
 
     for i in tqdm(range(len(paths))):
         filename = '.'.join(paths[i].split('/')[-1].split('.')[:-1])
+        # print("Processing image: %s" % paths[i])
         img = Image.open(paths[i])
         image_size = img.size
         img = np.array(img) / 255.
@@ -101,9 +105,10 @@ def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_ker
 
 if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"]="0"
-    config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
-    session = tf.Session(config=config)
-    tensorflow_backend.set_session(session)
+    config = tf.compat.v1.ConfigProto(gpu_options=tf.compat.v1.GPUOptions(allow_growth=True))
+    session = tf.compat.v1.Session(config=config)
+    # K.set_session(session)
+    tf.compat.v1.keras.backend.set_session(session)
 
 
     # define the program description
