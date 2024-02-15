@@ -17,7 +17,7 @@ from tensorflow.keras.optimizers import Adam
 # from tensorflow.keras.optimizers.legacy import Adam
 from numpy import random
 from random import randint
-from utils_new import data_augmentation, prepare_dataset
+from utils import data_augmentation, prepare_dataset
 
 
 def get_unet(minimum_kernel=32, do=0, activation=ReLU, iteration=1):
@@ -386,7 +386,7 @@ def get_unet(minimum_kernel=32, do=0, activation=ReLU, iteration=1):
         loss_funcs.update({f'out1_cls_art{iteration_id + 1}': losses.binary_crossentropy})
     for iteration_id in range(iteration):
         loss_funcs.update({f'out1_cls_vei{iteration_id + 1}': losses.binary_crossentropy})
-  
+
     metrics = {
         "seg_final_out": ['accuracy'],
         "cls_art_final_out": ['accuracy'],

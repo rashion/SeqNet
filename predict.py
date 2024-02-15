@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.layers import ReLU
 
-from utils_new import define_model, crop_prediction, lowercase
+from utils import define_model, crop_prediction, lowercase
 # from keras.layers import ReLU
 from tqdm import tqdm
 import numpy as np
@@ -15,8 +15,8 @@ import cv2
 from PIL import Image
 
 
-def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_kernel=32, 
-            epochs=200, iteration=3, crop_size=128, stride_size=3, 
+def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_kernel=32,
+            epochs=200, iteration=3, crop_size=128, stride_size=3,
             input_path='', output_path='', DATASET='ALL'):
     exts = ['png', 'jpg', 'tif', 'bmp', 'gif']
 
@@ -63,7 +63,7 @@ def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_ker
         pred_seg = pred_
         pred_ = resize(pred_, image_size[::-1])
         cv2.imwrite(f"{output_path}/out_seg/{filename}.png", pred_)
-    
+
         #for artery
         pred = preds[2*iteration + 1]
         pred_patches = crop_prediction.pred_to_patches(pred, crop_size, stride_size)
@@ -135,5 +135,5 @@ if __name__ == "__main__":
 
 
     #stride_size = 3 will be better, but slower
-    predict(batch_size=24, epochs=200, iteration=3, stride_size=3, crop_size=128, 
+    predict(batch_size=24, epochs=200, iteration=3, stride_size=3, crop_size=128,
         input_path=input_path, output_path=output_path)
