@@ -13,49 +13,20 @@ from tensorflow.keras.layers import ReLU
 
 tf.compat.v1.disable_v2_behavior()
 
-# def process_image(model, img, crop_size, stride_size):
-#     image_size = img.size
-#     img = np.array(img) / 255.
-#     img = resize(img, [576, 576])
-#     patches_pred, new_height, new_width, _ = crop_prediction.get_test_patches(img, crop_size, stride_size)
-#     preds = model.predict(patches_pred)
-#     return preds, new_height, new_width, image_size
-
 def save_mask(pred_, output_path, filename, image_size, mask_type, crop_size, stride_size, new_height, new_width):
-    # pred_ = preds[iteration]
-    # pred_ = crop_prediction.pred_to_patches(pred_, crop_size, stride_size)
     pred_ = crop_prediction.recompone_overlap(pred_, crop_size, stride_size, new_height, new_width)
     pred_ = pred_[:, 0:576, 0:576, :]
     pred_ = pred_[0, :, :, 0]
     pred_ = 255. * (pred_ - np.min(pred_)) / (np.max(pred_) - np.min(pred_))
-    # pred_mask = pred_
     pred_ = resize(pred_, image_size[::-1])
     cv2.imwrite(f"{output_path}/{mask_type}/{filename}.png", pred_)
     del pred_
-    # return pred_mask
-
-# def save_final_output(output_path, filename, pred_seg, pred_art, pred_vei, image_size):
-#     pred_final = np.zeros((*list(pred_seg.shape), 3), dtype=pred_seg.dtype)
-#     art_temp = pred_final[pred_art >= pred_vei]
-#     art_temp[:,2] = pred_seg[pred_art >= pred_vei]
-#     pred_final[pred_art >= pred_vei] = art_temp
-#     vei_temp = pred_final[pred_art < pred_vei]
-#     vei_temp[:,0] = pred_seg[pred_art < pred_vei]
-#     pred_final[pred_art < pred_vei] = vei_temp
-#     pred_ = pred_final
-#     pred_ = resize(pred_, image_size[::-1])
-#     cv2.imwrite(f"{output_path}/out_final/{filename}.png", pred_)
 
 def save_final_output(output_path, filename, pred_seg_mask_path, pred_art_mask_path, pred_vei_mask_path):
     # Load masks
     pred_seg_mask = cv2.imread(pred_seg_mask_path, cv2.IMREAD_GRAYSCALE)
     pred_art_mask = cv2.imread(pred_art_mask_path, cv2.IMREAD_GRAYSCALE)
     pred_vei_mask = cv2.imread(pred_vei_mask_path, cv2.IMREAD_GRAYSCALE)
-
-    # Resize masks to image size
-    # pred_seg_mask = cv2.resize(pred_seg_mask, tuple(image_size[::-1]))
-    # pred_art_mask = cv2.resize(pred_art_mask, tuple(image_size[::-1]))
-    # pred_vei_mask = cv2.resize(pred_vei_mask, tuple(image_size[::-1]))
 
     pred_final = np.zeros((*pred_seg_mask.shape, 3), dtype=np.uint8)
     pred_final[pred_art_mask >= pred_vei_mask, 2] = pred_seg_mask[pred_art_mask >= pred_vei_mask]
@@ -90,7 +61,6 @@ def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_ker
     for i in tqdm(range(len(paths))):
         filename = '.'.join(paths[i].split('/')[-1].split('.')[:-1])
         img = Image.open(paths[i])
-        # preds, new_height, new_width, image_size  = process_image(model, img, crop_size, stride_size)
         image_size = img.size
         img = np.array(img) / 255.
         img = resize(img, [576, 576])
@@ -99,9 +69,6 @@ def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_ker
         preds = model.predict(patches_pred)
 
         # Save masks
-        # pred_seg = save_mask(preds, output_path, filename, iteration, image_size, "out_seg", crop_size, stride_size, new_height, new_width)
-        # pred_art = save_mask(preds, output_path, filename, 2 * iteration + 1, image_size, "out_art", crop_size, stride_size, new_height, new_width)
-        # pred_vei = save_mask(preds, output_path, filename, 3 * iteration + 2, image_size, "out_vei", crop_size, stride_size, new_height, new_width)
         save_mask(preds[iteration], output_path, filename, image_size, "out_seg", crop_size, stride_size, new_height, new_width)
         save_mask(preds[2 * iteration + 1], output_path, filename, image_size, "out_art", crop_size, stride_size, new_height, new_width)
         save_mask(preds[3 * iteration + 2], output_path, filename, image_size, "out_vei", crop_size, stride_size, new_height, new_width)
