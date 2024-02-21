@@ -13,8 +13,8 @@ from tensorflow.keras.layers import Input, MaxPooling2D, Lambda
 from tensorflow.keras.layers import concatenate, Conv2D, Conv2DTranspose, Dropout, ReLU, BatchNormalization, Activation
 from tensorflow.keras.layers import add, multiply
 from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-# from tensorflow.keras.optimizers.legacy import Adam
+#  from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.legacy import Adam
 from numpy import random
 from random import randint
 from utils import data_augmentation, prepare_dataset

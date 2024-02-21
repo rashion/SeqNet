@@ -11,6 +11,8 @@ from PIL import Image
 from tensorflow.keras import backend as K
 from tensorflow.keras.layers import ReLU
 
+tf.compat.v1.disable_v2_behavior()
+
 # def process_image(model, img, crop_size, stride_size):
 #     image_size = img.size
 #     img = np.array(img) / 255.
@@ -108,8 +110,11 @@ def predict(ACTIVATION='ReLU', dropout=0.1, batch_size=32, repeat=4, minimum_ker
         save_final_output(output_path, filename, f"{output_path}/out_seg/{filename}.png", f"{output_path}/out_art/{filename}.png", f"{output_path}/out_vei/{filename}.png")
 
 if __name__ == "__main__":
-    os.environ["CUDA_VISIBLE_DEVICES"]="0"
-    config = tf.compat.v1.ConfigProto(gpu_options=tf.compat.v1.GPUOptions(allow_growth=True))
+    #  os.environ["CUDA_VISIBLE_DEVICES"]="0"
+    #  os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+    config = tf.compat.v1.ConfigProto()
+    config.gpu_options.allow_growth = True
+    config.gpu_options.per_process_gpu_memory_fraction = 0.9
     session = tf.compat.v1.Session(config=config)
     tf.compat.v1.keras.backend.set_session(session)
 
